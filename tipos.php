@@ -11,14 +11,15 @@
 		if($_POST['submit'] == "Adicionar"){
 			if(trim($_POST['nome']) != ""){
 				//inserindo novo grupo
-				ExecutarDB("insert into grupos (nome) values ('".$_POST['nome']."')");
+				ExecutarDB("insert into tipos (nome) values ('".$_POST['nome']."')");
 			}
 		}
 	}
 		
 	// Verifica se foi informado um registro para excluir
 	if(isset($_GET['excluir'])){
-		ExecutarDB("delete from grupos where cod = ".$_GET['excluir']);
+		//excluindo um grupo
+		ExecutarDB("delete from tipos where cod = ".$_GET['excluir']);
 	}
 		
 	// Verifica se foi informado um registro para alterar
@@ -26,27 +27,27 @@
 		if($_POST['submit'] == "Alterar"){
 			//alterando um grupo
 			if(trim($_POST['nome']) != ""){
-					ExecutarDB("update grupos set nome = '".$_POST['nome']."' where cod = ".$_POST['codigo']);
+				ExecutarDB("update tipos set nome = '".$_POST['nome']."' where cod = ".$_POST['codigo']);
 			}
 		}
 	}
 ?>
 <html>
 	<head>
-		<title>Grupos de Estudo</title>
+		<title>Tipos de Grupos de Estudo</title>
 	</head>
 	<body>
-		<h2>Grupos de Estudo</h2>
+		<h2>Tipos de Grupos de Estudo</h2>
 		<h3><?php echo "Usuario ".$_SESSION["login"]." conectado com sucesso!"; ?></h3>
-		<form action="grupos.php" method="POST">
+		<form action="tipos.php" method="POST">
 			<table>
 				<tr>
 					<td colspan="2">
 						<?php
 							if(isset($_GET['alterar'])){
-								echo "Alterar grupo de estudo";
+								echo "Alterar tipo";
 							}else{
-								echo "Inserir novo grupo de estudo";
+								echo "Inserir novo tipo";
 							}
 						?>
 					</td>
@@ -67,11 +68,11 @@
 								$conexao = RetornaConexao(); 
 								
 								//buscando pelo grupo
-								$sql = "select nome from grupos where cod = ".$_GET['alterar'];
-									
+								$sql = "select nome from tipos where cod = ".$_GET['alterar'];
+										
 								$result = mysqli_query($conexao, $sql, $field=0);
 								if (!$result){
-									die('Erro consultando para alterar registro de grupos no Banco de Dados.');
+									die('Erro consultando para alterar registro de tipos no Banco de Dados.');
 								}else{
 									if (mysqli_num_rows($result) > 0){
 										// verifica o nome retornado
@@ -102,7 +103,7 @@
 				</tr>
 			</table>
 		</form>
-		<h3>Grupos cadastrados</h3>
+		<h3>Tipos cadastrados</h3>
 		<table>
 			<tr>
 				<td>Código</td>
@@ -114,12 +115,12 @@
 				// realiza a conexao com o banco de dados
 				$conexao = RetornaConexao(); 
 				
-				//inserindo novo grupo
-				$sql = "select cod, nome from grupos";
+				//Consultando grupos cadastrados
+				$sql = "select cod, nome from tipos";
 					
 				$result = mysqli_query($conexao, $sql, $field=0);
 				if (!$result){
-					die('Erro consultando registro de grupos no Banco de Dados.');
+					die('Erro consultando registro de tipos no Banco de Dados.');
 				}else{
 					$contador = 0;
 						
@@ -130,17 +131,18 @@
 							$nome = $row["nome"];
 							$contador++;
 								
-							echo "<tr><td>".$cod."</td><td>".$nome."</td><td><a href='grupos.php?excluir=".$cod."'>Excluir</a></td><td><a href='grupos.php?alterar=".$cod."'>Alterar</a></td></tr>";
+							echo "<tr><td>".$cod."</td><td>".$nome."</td><td><a href='tipos.php?excluir=".$cod."'>Excluir</a></td><td><a href='tipos.php?alterar=".$cod."'>Alterar</a></td></tr>";
 						}
 					}
 						
 					echo "<tr><td colspan='4'>".$contador." linhas encontradas.</td></tr>";
 				}
-						
+					
 				mysqli_close($conexao);
+				
 			?>
 			<tr>
-				<td colspan="3"><a href="grupos.php">Cliqui aqui para atualizar a lista!</a></td>
+				<td colspan="3"><a href="tipos.php">Cliqui aqui para atualizar a lista!</a></td>
 			</tr>
 			<tr>
 				<td colspan="3"><a href="index.php">Voltar</a></td>

@@ -1,3 +1,7 @@
+<?php
+	// Funções para banco de dados
+	include 'utildb.php';
+?>
 <html>
 	<head>
 		<title>Sistema Web</title>
@@ -27,7 +31,7 @@
 					$senha = md5($_POST['senha']);
 						
 					// realiza a conexao com o banco de dados
-					$conexao = mysqli_connect('localhost','root','', 'Lab5'); 
+					$conexao = RetornaConexao(); 
 					if (!$conexao) { 
 						die('Erro ao conectar com o Banco de Dados: ' . mysql_error()); 
 					}else{		
@@ -57,10 +61,13 @@
 		</h3>
 		<ul>
 			<li>
+				<a href="tipos.php">Tipos de Grupos de Estudo</a>
+			</li>
+			<li>
 				<a href="grupos.php">Grupos de Estudo</a>
 			</li>
 			<li>
-				<a href="usuarios.php">Altear informações do usuário</a>
+				<a href="usuariologado.php">Altear informações do usuário logado</a>
 			</li>
 		</ul>
 	</body>

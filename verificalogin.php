@@ -1,0 +1,20 @@
+<?php
+	session_start();
+		
+	// verifica se usuário já está logado no sistema
+	// se não estiver, redireciona para a página de login
+	function VerificaLogin(){
+		if(isset($_SESSION["login"]) && isset($_SESSION["senha"])){
+			// verifica se o tempo de execução já expirou
+			if(isset($_COOKIE["logado"])){
+				setcookie("logado", 'ok', time()+180);			
+			} else{
+				session_destroy();
+				header("Location: login.php");
+			}
+		}else{
+			session_destroy();
+			header("Location: login.php");
+		}
+	}
+?>

@@ -4,11 +4,14 @@
 		header("Location: login.php?msg=Informe usuário e senha.");
 	}
 	
+	// Funções para banco de dados
+	include 'utildb.php';
+	
 	// recebe os dados para serem cadastrados
 	$login = $_POST['login'];
 	$senha = md5($_POST['senha']);	
 	// realiza a conexao com o banco de dados
-	$conexao = mysqli_connect('localhost','root','', 'Lab5'); 
+	$conexao = RetornaConexao(); 
 	if (!$conexao) { 
 		die('Erro ao conectar com o Banco de Dados: ' . mysql_error()); 
 	}else{		
