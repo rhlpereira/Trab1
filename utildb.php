@@ -12,7 +12,7 @@
 		
 		$result = mysqli_query($conexao, $sql, $field=0);
 		if (!$result){
-			throw new Exception('Erro ao executar SQL no Banco de Dados.');
+			throw new Exception('Erro ao executar SQL no Banco de Dados. [' . $sql . ']');
 		}
 			
 		mysqli_close($conexao);

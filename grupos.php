@@ -10,8 +10,27 @@
 	if(isset($_POST['nome']) && isset($_POST['submit'])){
 		if($_POST['submit'] == "Adicionar"){
 			if(trim($_POST['nome']) != ""){
+				if(isset($_POST['tipo'])){
+					$tipo = $_POST['tipo'];
+						
+					if($tipo == 0){
+						$tipo = null;
+					}
+				}else{
+					$tipo = null;
+				}
+					
 				//inserindo novo grupo
-				ExecutarDB("insert into grupos (nome) values ('".$_POST['nome']."')");
+				$sql = "insert into grupos (nome, tipo) values ('".$_POST['nome']."', ";
+				if($tipo == null){
+					$sql = $sql . "null";
+				}else{
+					$sql = $sql . $tipo;
+				}
+				$sql = $sql . ")";
+					
+				//echo $sql;
+				ExecutarDB($sql);
 			}
 		}
 	}
@@ -26,7 +45,25 @@
 		if($_POST['submit'] == "Alterar"){
 			//alterando um grupo
 			if(trim($_POST['nome']) != ""){
-					ExecutarDB("update grupos set nome = '".$_POST['nome']."' where cod = ".$_POST['codigo']);
+				if(isset($_POST['tipo'])){
+					$tipo = $_POST['tipo'];
+						
+					if($tipo == 0){
+						$tipo = null;
+					}
+				}else{
+					$tipo = null;
+				}
+					
+				$sql = "update grupos set nome = '".$_POST['nome']."', tipo = ";
+				if($tipo == null){
+					$sql = $sql . "null";
+				}else{
+					$sql = $sql . $tipo;
+				}
+				$sql = $sql . " where cod = ".$_POST['codigo'];
+					
+				ExecutarDB($sql);
 			}
 		}
 	}
@@ -60,6 +97,8 @@
 					<td>Nome:</td>
 					<td>
 						<?php
+							$tipo = null;
+								
 							if(isset($_GET['alterar'])){
 								$nome = "";
 									
@@ -67,7 +106,7 @@
 								$conexao = RetornaConexao(); 
 								
 								//buscando pelo grupo
-								$sql = "select nome from grupos where cod = ".$_GET['alterar'];
+								$sql = "select * from grupos where cod = ".$_GET['alterar'];
 									
 								$result = mysqli_query($conexao, $sql, $field=0);
 								if (!$result){
@@ -77,6 +116,7 @@
 										// verifica o nome retornado
 										while($row = mysqli_fetch_assoc($result)) {
 											$nome = $row["nome"];
+											$tipo = $row["tipo"];
 										}
 									}
 								}
@@ -88,7 +128,51 @@
 							}
 						?>
 					</td>
+				</tr>
 				<tr>
+					<td>Tipo:</td>
+					<td>
+						<select name='tipo'>
+							<?php
+								echo "<option value='0'";
+									
+								if($tipo == null){
+									echo " selected ";
+								}									
+								echo ">Nenhum</option>";
+											
+								// realiza a conexao com o banco de dados
+								$conexao = RetornaConexao(); 
+								
+								//buscando pelos tipos
+								$sql = "select * from tipos";
+									
+								$result = mysqli_query($conexao, $sql, $field=0);
+								if (!$result){
+									die('Erro consultando tipos no Banco de Dados.');
+								}else{
+									if (mysqli_num_rows($result) > 0){
+										// verifica o nome retornado
+										while($row = mysqli_fetch_assoc($result)) {
+											$tipodsc = $row["nome"];
+											$tipocod = $row["cod"];
+												
+											echo "<option value='".$tipocod."'";
+												
+											if($tipo != null){
+												if($tipo == $tipocod){
+													echo " selected ";
+												}
+											}									
+											echo ">".$tipodsc."</option>";
+										}
+									}
+								}
+								mysqli_close($conexao);
+							?>
+						</select>
+					</td>
+				</tr>
 				<tr>
 					<td colspan="2">
 						<?php
@@ -107,6 +191,7 @@
 			<tr>
 				<td>Código</td>
 				<td>Nome</td>
+				<td>Tipo</td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 			</tr>
@@ -115,7 +200,7 @@
 				$conexao = RetornaConexao(); 
 				
 				//inserindo novo grupo
-				$sql = "select cod, nome from grupos";
+				$sql = "select t1.cod, t1.nome, t1.tipo, t2.nome as tipodsc from grupos t1 left join tipos t2 on t2.cod = t1.tipo ";
 					
 				$result = mysqli_query($conexao, $sql, $field=0);
 				if (!$result){
@@ -128,9 +213,10 @@
 						while($row = mysqli_fetch_assoc($result)) {
 							$cod = $row["cod"];
 							$nome = $row["nome"];
+							$tipodsc = $row["tipodsc"];
 							$contador++;
 								
-							echo "<tr><td>".$cod."</td><td>".$nome."</td><td><a href='grupos.php?excluir=".$cod."'>Excluir</a></td><td><a href='grupos.php?alterar=".$cod."'>Alterar</a></td></tr>";
+							echo "<tr><td>".$cod."</td><td>".$nome."</td><td>".$tipodsc."</td><td><a href='grupos.php?excluir=".$cod."'>Excluir</a></td><td><a href='grupos.php?alterar=".$cod."'>Alterar</a></td></tr>";
 						}
 					}
 						
