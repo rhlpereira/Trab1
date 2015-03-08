@@ -1,4 +1,5 @@
 <?php
+	/*
 	if(!isset($_POST['login']) || !isset($_POST['senha'])){
 		session_destroy();
 		header("Location: login.php?msg=Informe usuário e senha.");
@@ -25,4 +26,5 @@
 		}	
 		mysqli_close($conexao);
 	}	
+	*/
 ?>
